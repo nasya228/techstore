@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Смартфоны и телефоны | Купить телефон в TechStore</title>
+    <meta name="description" content="Каталог смартфонов: Apple iPhone, Samsung, Xiaomi, Realme. Цены от 15 000 руб. Официальная гарантия. Доставка по России.">
+    
+    <meta property="og:title" content="Смартфоны и телефоны | TechStore">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://techstore.com/telefony">
+    <meta property="og:image" content="https://techstore.com/images/og-phones.jpg">
+    <meta property="og:description" content="Смартфоны Apple iPhone, Samsung, Xiaomi. Гарантия 2 года.">
+    <link rel="icon" href="https://images.icon-icons.com/4317/PNG/96/atom_science_molecule_medical_research_physics_icon_267683.png" type="image/x-icon">
+    <link rel="canonical" href="https://techstore.com/telefony">
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #9f7aea 100%);
+            min-height: 100vh;
+        }
+        
+        .feature-card {
+            backdrop-filter: blur(10px);
+        }
+        
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+        
+        .product-button {
+            transition: all 0.3s;
+        }
+        
+        .product-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(200, 200, 220, 0.3);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(150, 140, 200, 0.15);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #9f7aea;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .active-nav-link {
+            color: #9f7aea;
+        }
+        
+        .active-filter {
+            background: #9f7aea;
+            color: white;
+        }
+        
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    
+    <header class="bg-white bg-opacity-90 py-4 fixed w-full top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-purple-600">TECHSTORE</div>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Главная</a>
+                <a href="noutbuki.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Ноутбуки</a>
+                <a href="telefony.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Телефоны</a>
+                <a href="akcii.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Акции</a>
+                <button onclick="toggleAdminPanel()" class="nav-link text-gray-700 hover:text-purple-600 transition">Админ-панель</button>
+            </div>
+            
+            
+            <div class="md:hidden">
+                <button id="toggleMenu" class="flex flex-col space-y-1 min-h-11 min-w-11 justify-center items-center" aria-label="Открыть меню">
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                </button>
+            </div>
+        </nav>
+        
+       
+        <div id="mobileMenu" class="mobile-menu md:hidden bg-white bg-opacity-95 absolute top-full left-0 w-full hidden shadow-md">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="index.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Главная</a>
+                <a href="noutbuki.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Ноутбуки</a>
+                <a href="telefony.html" class="text-purple-600 transition py-3 text-center border-b border-gray-200">Телефоны</a>
+                <a href="akcii.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Акции</a>
+                <button onclick="toggleAdminPanel()" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Админ-панель</button>
+            </div>
+        </div>
+    </header>
+
+    
+    <div id="adminPanel" class="admin-panel fixed top-0 left-0 w-full h-full z-50 hidden overflow-y-auto">
+        <div class="container mx-auto p-6 max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Админ-панель - Телефоны</h2>
+                <button onclick="toggleAdminPanel()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Закрыть
+                </button>
+            </div>
+
+           
+            <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                <h3 class="text-xl font-semibold mb-4">Добавить новый телефон</h3>
+                <form id="addPhoneForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Название *</label>
+                            <input type="text" id="phoneName" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="iPhone 15 Pro Max">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Цена (руб) *</label>
+                            <input type="number" id="phonePrice" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="124990">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Бренд *</label>
+                            <select id="phoneBrand" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="">Выберите бренд</option>
+                                <option value="Apple">Apple</option>
+                                <option value="Samsung">Samsung</option>
+                                <option value="Xiaomi">Xiaomi</option>
+                                <option value="Realme">Realme</option>
+                                <option value="Huawei">Huawei</option>
+                                <option value="Google">Google</option>
+                                <option value="OnePlus">OnePlus</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Старая цена (руб)</label>
+                            <input type="number" id="phoneOldPrice" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="69990">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+                        <textarea id="phoneDescription" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                  placeholder="Описание телефона..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">URL изображения *</label>
+                        <input type="url" id="phoneImage" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               placeholder="https://example.com/image.jpg">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL) *</label>
+                            <input type="text" id="phoneSlug" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="iphone-15-pro-max">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Категория *</label>
+                            <select id="phoneCategory" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="flagship">Флагман</option>
+                                <option value="midrange">Средний класс</option>
+                                <option value="budget">Бюджетный</option>
+                                <option value="gaming">Игровой</option>
+                            </select>
+                        </div>
+                    </div>
+
+                   
+                    <div class="border-t pt-4">
+                        <h4 class="text-lg font-medium mb-3">Характеристики</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="specificationsContainer">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Экран</label>
+                                <input type="text" id="specDisplay" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder='6.7" Super Retina XDR'>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Память</label>
+                                <input type="text" id="specStorage" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="256GB">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Камера</label>
+                                <input type="text" id="specCamera" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="48MP + 12MP + 12MP">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Процессор</label>
+                                <input type="text" id="specProcessor" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="A17 Pro">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Зарядка</label>
+                                <input type="text" id="specCharging" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="120W">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Аккумулятор</label>
+                                <input type="text" id="specBattery" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="5000 mAh">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-all duration-300">
+                        Добавить телефон
+                    </button>
+                </form>
+            </div>
+
+           
+            <div class="bg-white rounded-lg p-6 shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Существующие телефоны</h3>
+                <div id="adminPhonesList" class="space-y-4">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <main class="pt-20">
+        
+        <section class="text-center py-8 md:py-16 px-4">
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-gray-800">Смартфоны и телефоны</h1>
+            <p class="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 text-gray-600 max-w-2xl mx-auto">
+                Лучшие модели 2025 года!
+            </p>
+        </section>
+        
+        
+        <section class="container mx-auto px-4 py-6">
+            <div class="flex flex-wrap gap-2 md:gap-4 justify-center mb-6 md:mb-8">
+                <button class="filter-btn active-filter text-white px-4 py-2 rounded-lg text-sm md:text-base min-h-11 transition" data-brand="all">Все телефоны</button>
+                <button class="filter-btn bg-white text-gray-700 px-4 py-2 rounded-lg text-sm md:text-base min-h-11 transition hover:bg-purple-50" data-brand="Apple">Apple iPhone</button>
+                <button class="filter-btn bg-white text-gray-700 px-4 py-2 rounded-lg text-sm md:text-base min-h-11 transition hover:bg-purple-50" data-brand="Samsung">Samsung</button>
+                <button class="filter-btn bg-white text-gray-700 px-4 py-2 rounded-lg text-sm md:text-base min-h-11 transition hover:bg-purple-50" data-brand="Xiaomi">Xiaomi</button>
+                <button class="filter-btn bg-white text-gray-700 px-4 py-2 rounded-lg text-sm md:text-base min-h-11 transition hover:bg-purple-50" data-brand="Realme">Realme</button>
+            </div>
+            
+            
+            <div id="loading" class="text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <p class="mt-2 text-gray-600">Загрузка телефонов...</p>
+            </div>
+            <div id="phonesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+               
+            </div>
+        </section>
+    </main>
+
+    
+    <script>
+       
+        const SUPABASE_URL = 'https://edugnfxgkwjipagtpcvy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdWduZnhna3dqaXBhZ3RwY3Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0MTg2NzgsImV4cCI6MjA3Nzk5NDY3OH0.XURdMQB_-PmsH_vXZLARHxFVEMAbvB3crVD27Ik2XEQ'; // Замените на ваш ключ
+        
+        let supabase;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase initialized successfully');
+            } else {
+                console.error('Supabase library not loaded');
+                alert('Ошибка: Библиотека Supabase не загрузилась. Проверьте подключение к интернету.');
+                return;
+            }
+
+          
+            const toggleMenu = document.getElementById('toggleMenu');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const hamburgerLines = document.querySelectorAll('.hamburger-line');
+            
+            toggleMenu.addEventListener('click', function() {
+                const isOpen = mobileMenu.classList.contains('hidden');
+                
+                if (isOpen) {
+                    mobileMenu.classList.remove('hidden');
+                    hamburgerLines[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    hamburgerLines[1].style.opacity = '0';
+                    hamburgerLines[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    hamburgerLines[0].style.transform = 'none';
+                    hamburgerLines[1].style.opacity = '1';
+                    hamburgerLines[2].style.transform = 'none';
+                }
+            });
+
+           
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => {
+                        b.classList.remove('active-filter', 'bg-purple-600', 'text-white');
+                        b.classList.add('bg-white', 'text-gray-700');
+                    });
+                    this.classList.remove('bg-white', 'text-gray-700');
+                    this.classList.add('active-filter', 'bg-purple-600', 'text-white');
+                    
+                    currentFilter = this.dataset.brand;
+                    loadPhones(currentFilter);
+                });
+            });
+
+            
+            loadPhones();
+            loadAdminPhones(); 
+
+            
+            document.getElementById('addPhoneForm').addEventListener('submit', handleAddPhone);
+        });
+
+       
+        function toggleAdminPanel() {
+            const adminPanel = document.getElementById('adminPanel');
+            adminPanel.classList.toggle('hidden');
+            
+         
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                const hamburgerLines = document.querySelectorAll('.hamburger-line');
+                hamburgerLines[0].style.transform = 'none';
+                hamburgerLines[1].style.opacity = '1';
+                hamburgerLines[2].style.transform = 'none';
+            }
+        }
+
+        
+        async function loadPhones(filter = 'all') {
+            const container = document.getElementById('phonesContainer');
+            const loading = document.getElementById('loading');
+            
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                let query = supabase
+                    .from('phones')
+                    .select('*')
+                    .order('price', { ascending: true });
+
+                
+                if (filter !== 'all') {
+                    query = query.eq('brand', filter);
+                }
+
+                const { data: phones, error } = await query;
+
+                loading.style.display = 'none';
+                
+                if (error) {
+                    console.error('Error loading phones:', error);
+                    container.innerHTML = '<p class="text-center col-span-4 py-8 text-red-600">Ошибка загрузки телефонов: ' + error.message + '</p>';
+                    return;
+                }
+
+                
+                displayPhones(phones);
+            } catch (error) {
+                console.error('Error:', error);
+                loading.innerHTML = '<p class="text-red-600">Ошибка загрузки телефонов: ' + error.message + '</p>';
+            }
+        }
+
+        
+        async function loadAdminPhones() {
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { data: phones, error } = await supabase
+                    .from('phones')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                displayAdminPhones(phones);
+            } catch (error) {
+                console.error('Error loading admin phones:', error);
+                document.getElementById('adminPhonesList').innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + error.message + '</p>';
+            }
+        }
+
+        
+        async function handleAddPhone(e) {
+            e.preventDefault();
+            
+            if (!supabase) {
+                alert('Ошибка: Supabase не инициализирован');
+                return;
+            }
+
+            const phoneData = {
+                name: document.getElementById('phoneName').value,
+                price: parseInt(document.getElementById('phonePrice').value),
+                old_price: document.getElementById('phoneOldPrice').value ? parseInt(document.getElementById('phoneOldPrice').value) : null,
+                brand: document.getElementById('phoneBrand').value,
+                description: document.getElementById('phoneDescription').value,
+                image_url: document.getElementById('phoneImage').value,
+                slug: document.getElementById('phoneSlug').value,
+                category: document.getElementById('phoneCategory').value,
+                specifications: {
+                    display: document.getElementById('specDisplay').value,
+                    storage: document.getElementById('specStorage').value,
+                    camera: document.getElementById('specCamera').value,
+                    processor: document.getElementById('specProcessor').value,
+                    charging: document.getElementById('specCharging').value,
+                    battery: document.getElementById('specBattery').value
+                }
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('phones')
+                    .insert([phoneData]);
+
+                if (error) throw error;
+
+               
+                document.getElementById('addPhoneForm').reset();
+                
+                
+                alert('Телефон успешно добавлен!');
+                
+               
+                loadPhones(currentFilter);
+                loadAdminPhones();
+                
+            } catch (error) {
+                console.error('Error adding phone:', error);
+                alert('Ошибка при добавлении телефона: ' + error.message);
+            }
+        }
+
+       
+        function displayPhones(phones) {
+            const container = document.getElementById('phonesContainer');
+            
+            if (!phones || phones.length === 0) {
+                container.innerHTML = '<p class="text-center col-span-4 py-8 text-gray-600">Телефоны временно отсутствуют</p>';
+                return;
+            }
+
+            container.innerHTML = phones.map(phone => `
+                <div class="product-card bg-white rounded-xl p-4 md:p-6 shadow-sm">
+                    <div class="relative">
+                        <img 
+                            src="${phone.image_url}" 
+                            alt="${phone.name}" 
+                            loading="lazy"
+                            class="w-full h-48 md:h-56 object-contain mb-4 rounded-lg"
+                        >
+                    </div>
+                    <div class="text-gray-500 text-sm uppercase tracking-wide mb-2">${phone.brand}</div>
+                    <h3 class="text-lg md:text-xl font-semibold mb-3 text-gray-800">${phone.name}</h3>
+                    <ul class="text-sm md:text-base space-y-1 mb-4 text-left text-gray-600">
+                        ${renderPhoneSpecifications(phone.specifications)}
+                    </ul>
+                    <div class="mb-4">
+                        ${phone.old_price ? `
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-500 line-through text-lg">${formatPrice(phone.old_price)} руб.</span>
+                                <span class="text-2xl md:text-3xl font-bold text-purple-600">${formatPrice(phone.price)} руб.</span>
+                            </div>
+                        ` : `
+                            <div class="text-2xl md:text-3xl font-bold text-purple-600">${formatPrice(phone.price)} руб.</div>
+                        `}
+                    </div>
+                    <a href="catalog/telefony/${phone.brand.toLowerCase()}/${phone.slug}.html" 
+                       class="product-button bg-purple-600 text-white py-3 px-6 rounded-lg text-center block font-semibold min-h-11 hover:bg-purple-700 shadow-md">
+                        Подробнее
+                    </a>
+                </div>
+            `).join('');
+        }
+
+       
+        function displayAdminPhones(phones) {
+            const container = document.getElementById('adminPhonesList');
+            
+            if (!phones || phones.length === 0) {
+                container.innerHTML = '<p class="text-gray-600">Телефонов нет</p>';
+                return;
+            }
+
+            container.innerHTML = phones.map(phone => `
+                <div class="border rounded-lg p-4 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <img src="${phone.image_url}" alt="${phone.name}" class="w-16 h-16 object-contain rounded">
+                        <div>
+                            <h4 class="font-semibold">${phone.name}</h4>
+                            <p class="text-purple-600 font-bold">${formatPrice(phone.price)} руб.</p>
+                            <p class="text-sm text-gray-500">${phone.brand} • ${phone.category}</p>
+                        </div>
+                    </div>
+                    <button onclick="deletePhone('${phone.id}')" 
+                            class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                        Удалить
+                    </button>
+                </div>
+            `).join('');
+        }
+
+       
+        async function deletePhone(phoneId) {
+            if (!confirm('Вы уверены, что хотите удалить этот телефон?')) {
+                return;
+            }
+
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { error } = await supabase
+                    .from('phones')
+                    .delete()
+                    .eq('id', phoneId);
+
+                if (error) throw error;
+
+               
+                loadPhones(currentFilter);
+                loadAdminPhones();
+                
+                alert('Телефон успешно удален!');
+            } catch (error) {
+                console.error('Error deleting phone:', error);
+                alert('Ошибка при удалении телефона: ' + error.message);
+            }
+        }
+
+       
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ru-RU').format(price);
+        }
+
+       
+        function renderPhoneSpecifications(specs) {
+            if (!specs) return '';
+            
+            const specifications = typeof specs === 'string' ? JSON.parse(specs) : specs;
+            
+            return Object.entries(specifications)
+                .filter(([key, value]) => value && value !== '') 
+                .map(([key, value]) => {
+                    const label = getPhoneSpecLabel(key);
+                    return `<li>${label}: ${value}</li>`;
+                }).join('');
+        }
+
+       
+        function getPhoneSpecLabel(key) {
+            const labels = {
+                'display': 'Экран',
+                'storage': 'Память',
+                'camera': 'Камера',
+                'processor': 'Процессор',
+                'charging': 'Зарядка',
+                'battery': 'Аккумулятор'
+            };
+            return labels[key] || key;
+        }
+    </script>
+</body>
+</html>

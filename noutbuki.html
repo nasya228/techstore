@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Каталог ноутбуков | Купить ноутбук в TechStore</title>
+    <meta name="description" content="Каталог ноутбуков: игровые, офисные, ультрабуки. Цены от 25 000 руб. Сравнение характеристик. Доставка по Москве.">
+    
+    <meta property="og:title" content="Каталог ноутбуков | TechStore">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://techstore.com/noutbuki">
+    <meta property="og:image" content="https://techstore.com/images/og-laptops.jpg">
+    <meta property="og:description" content="Игровые, офисные, ультрабуки. Гарантия 2 года.">
+    <link rel="icon" href="https://images.icon-icons.com/4317/PNG/96/atom_science_molecule_medical_research_physics_icon_267683.png" type="image/x-icon">
+    <link rel="canonical" href="https://techstore.com/noutbuki">
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+   
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #9f7aea 100%);
+            min-height: 100vh;
+        }
+        
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+        
+        .product-button {
+            transition: all 0.3s;
+        }
+        
+        .product-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(200, 200, 220, 0.3);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(150, 140, 200, 0.15);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #9f7aea;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .active-nav-link {
+            background: rgba(159, 122, 234, 0.1);
+            color: #9f7aea;
+        }
+        
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+   
+    <header class="bg-white bg-opacity-90 py-4 fixed w-full top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-purple-600">TECHSTORE</div>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Главная</a>
+                <a href="noutbuki.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Ноутбуки</a>
+                <a href="telefony.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Телефоны</a>
+                <a href="akcii.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Акции</a>
+                <button onclick="toggleAdminPanel()" class="nav-link text-gray-700 hover:text-purple-600 transition">Админ-панель</button>
+            </div>
+            
+            
+            <div class="md:hidden">
+                <button id="toggleMenu" class="flex flex-col space-y-1 min-h-11 min-w-11 justify-center items-center" aria-label="Открыть меню">
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                </button>
+            </div>
+        </nav>
+        
+        
+        <div id="mobileMenu" class="mobile-menu md:hidden bg-white bg-opacity-95 absolute top-full left-0 w-full hidden shadow-md">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="index.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Главная</a>
+                <a href="noutbuki.html" class="text-purple-600 transition py-3 text-center border-b border-gray-200">Ноутбуки</a>
+                <a href="telefony.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Телефоны</a>
+                <a href="akcii.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Акции</a>
+                <button onclick="toggleAdminPanel()" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Админ-панель</button>
+            </div>
+        </div>
+    </header>
+
+    
+    <div id="adminPanel" class="admin-panel fixed top-0 left-0 w-full h-full z-50 hidden overflow-y-auto">
+        <div class="container mx-auto p-6 max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Админ-панель</h2>
+                <button onclick="toggleAdminPanel()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Закрыть
+                </button>
+            </div>
+
+            
+            <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                <h3 class="text-xl font-semibold mb-4">Добавить новый ноутбук</h3>
+                <form id="addProductForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Название *</label>
+                            <input type="text" id="productName" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   value="MACBOOK AIR (M4)">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Цена (руб) *</label>
+                            <input type="number" id="productPrice" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   value="129000">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+                        <textarea id="productDescription" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">Это лучшее предложение прямо сейчас на рынке среди всех ультрабуков! Новый процессор M4, ультратонкий дизайн и до 18 часов автономной работы.</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">URL изображения *</label>
+                        <input type="url" id="productImage" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               value="https://trend-wood.ru/upload/dev2fun.imagecompress/webp/iblock/a03/iszkwagihrr12vga022yky7kwdkk65u">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Категория *</label>
+                            <select id="productCategory" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="gaming">Игровой</option>
+                                <option value="ultrabook" selected>Ультрабук</option>
+                                <option value="office">Офисный</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL) *</label>
+                            <input type="text" id="productSlug" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   value="macbook-air-m4">
+                        </div>
+                    </div>
+
+                  
+                    <div class="border-t pt-4">
+                        <h4 class="text-lg font-medium mb-3">Характеристики</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="specificationsContainer">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Процессор</label>
+                                <input type="text" id="specProcessor" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       value="Apple M4">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Видеокарта</label>
+                                <input type="text" id="specGraphics" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       value="Встроенная 10-ядерная">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Память</label>
+                                <input type="text" id="specRam" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       value="8GB Unified Memory">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Накопитель</label>
+                                <input type="text" id="specStorage" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       value="256GB SSD">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Экран</label>
+                                <input type="text" id="specDisplay" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       value="13.6\" Liquid Retina">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Автономность</label>
+                                <input type="text" id="specBattery" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       value="до 18 часов">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-all duration-300">
+                        Добавить товар
+                    </button>
+                </form>
+            </div>
+
+           
+            <div class="bg-white rounded-lg p-6 shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Существующие товары</h3>
+                <div id="adminProductsList" class="space-y-4">
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <main class="pt-20">
+        
+        <section class="text-center py-8 md:py-12 px-4">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-gray-800">Каталог ноутбуков</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                Игровые, офисные, ультрабуки с официальной гарантией
+            </p>
+        </section>
+
+        
+        <section class="container mx-auto px-4 py-8">
+            <div id="loading" class="text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <p class="mt-2 text-gray-600">Загрузка товаров...</p>
+            </div>
+            <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+               
+            </div>
+        </section>
+    </main>
+
+    
+    <script>
+        
+        const SUPABASE_URL = 'https://edugnfxgkwjipagtpcvy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdWduZnhna3dqaXBhZ3RwY3Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0MTg2NzgsImV4cCI6MjA3Nzk5NDY3OH0.XURdMQB_-PmsH_vXZLARHxFVEMAbvB3crVD27Ik2XEQ'; // Замените на ваш ключ
+        
+        
+        let supabase;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase initialized successfully');
+            } else {
+                console.error('Supabase library not loaded');
+                alert('Ошибка: Библиотека Supabase не загрузилась. Проверьте подключение к интернету.');
+                return;
+            }
+
+            
+            const toggleMenu = document.getElementById('toggleMenu');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const hamburgerLines = document.querySelectorAll('.hamburger-line');
+            
+            toggleMenu.addEventListener('click', function() {
+                const isOpen = mobileMenu.classList.contains('hidden');
+                
+                if (isOpen) {
+                    mobileMenu.classList.remove('hidden');
+                    hamburgerLines[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    hamburgerLines[1].style.opacity = '0';
+                    hamburgerLines[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    hamburgerLines[0].style.transform = 'none';
+                    hamburgerLines[1].style.opacity = '1';
+                    hamburgerLines[2].style.transform = 'none';
+                }
+            });
+
+           
+            loadLaptops();
+            loadAdminProducts(); 
+            
+            document.getElementById('addProductForm').addEventListener('submit', handleAddProduct);
+        });
+
+        
+        function toggleAdminPanel() {
+            const adminPanel = document.getElementById('adminPanel');
+            adminPanel.classList.toggle('hidden');
+            
+           
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                const hamburgerLines = document.querySelectorAll('.hamburger-line');
+                hamburgerLines[0].style.transform = 'none';
+                hamburgerLines[1].style.opacity = '1';
+                hamburgerLines[2].style.transform = 'none';
+            }
+        }
+
+       
+        async function loadLaptops() {
+            const container = document.getElementById('productsContainer');
+            const loading = document.getElementById('loading');
+            
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { data: laptops, error } = await supabase
+                    .from('laptops')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                loading.style.display = 'none';
+                
+                if (error) {
+                    console.error('Error loading laptops:', error);
+                    container.innerHTML = '<p class="text-center col-span-3 py-8 text-red-600">Ошибка загрузки товаров: ' + error.message + '</p>';
+                    return;
+                }
+
+               
+                displayLaptops(laptops);
+            } catch (error) {
+                console.error('Error:', error);
+                loading.innerHTML = '<p class="text-red-600">Ошибка загрузки товаров: ' + error.message + '</p>';
+            }
+        }
+
+        
+        async function loadAdminProducts() {
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { data: laptops, error } = await supabase
+                    .from('laptops')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                displayAdminProducts(laptops);
+            } catch (error) {
+                console.error('Error loading admin products:', error);
+                document.getElementById('adminProductsList').innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + error.message + '</p>';
+            }
+        }
+
+        
+        async function handleAddProduct(e) {
+            e.preventDefault();
+            
+            if (!supabase) {
+                alert('Ошибка: Supabase не инициализирован');
+                return;
+            }
+
+            const productData = {
+                name: document.getElementById('productName').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                description: document.getElementById('productDescription').value,
+                image_url: document.getElementById('productImage').value,
+                category: document.getElementById('productCategory').value,
+                slug: document.getElementById('productSlug').value,
+                specifications: {
+                    processor: document.getElementById('specProcessor').value,
+                    graphics: document.getElementById('specGraphics').value,
+                    ram: document.getElementById('specRam').value,
+                    storage: document.getElementById('specStorage').value,
+                    display: document.getElementById('specDisplay').value,
+                    battery: document.getElementById('specBattery').value
+                }
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('laptops')
+                    .insert([productData]);
+
+                if (error) throw error;
+
+               
+                document.getElementById('addProductForm').reset();
+                
+              
+                alert('Товар успешно добавлен!');
+                
+              
+                loadLaptops();
+                loadAdminProducts();
+                
+            } catch (error) {
+                console.error('Error adding product:', error);
+                alert('Ошибка при добавлении товара: ' + error.message);
+            }
+        }
+
+        
+        function displayLaptops(laptops) {
+            const container = document.getElementById('productsContainer');
+            
+            if (!laptops || laptops.length === 0) {
+                container.innerHTML = '<p class="text-center col-span-3 py-8 text-gray-600">Товары временно отсутствуют</p>';
+                return;
+            }
+
+            container.innerHTML = laptops.map(laptop => `
+                <div class="product-card bg-white rounded-xl p-4 md:p-6 shadow-sm">
+                    <img 
+                        src="${laptop.image_url}" 
+                        alt="${laptop.name}" 
+                        loading="lazy"
+                        class="w-full h-48 md:h-56 object-contain mb-4 rounded-lg"
+                    >
+                    <h3 class="text-xl md:text-2xl font-semibold mb-3 text-gray-800">${laptop.name}</h3>
+                    <p class="text-2xl md:text-3xl font-bold text-purple-600 mb-4">${formatPrice(laptop.price)} руб.</p>
+                    <ul class="space-y-2 mb-4 text-sm md:text-base text-gray-600">
+                        ${renderSpecifications(laptop.specifications)}
+                    </ul>
+                    <a href="catalog/noutbuki/${laptop.slug}.html" 
+                       class="product-button bg-purple-600 text-white py-3 px-6 rounded-lg text-center block font-semibold min-h-11 hover:bg-purple-700 shadow-md">
+                        Подробнее
+                    </a>
+                </div>
+            `).join('');
+        }
+
+       
+        function displayAdminProducts(laptops) {
+            const container = document.getElementById('adminProductsList');
+            
+            if (!laptops || laptops.length === 0) {
+                container.innerHTML = '<p class="text-gray-600">Товаров нет</p>';
+                return;
+            }
+
+            container.innerHTML = laptops.map(laptop => `
+                <div class="border rounded-lg p-4 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <img src="${laptop.image_url}" alt="${laptop.name}" class="w-16 h-16 object-contain rounded">
+                        <div>
+                            <h4 class="font-semibold">${laptop.name}</h4>
+                            <p class="text-purple-600 font-bold">${formatPrice(laptop.price)} руб.</p>
+                            <p class="text-sm text-gray-500">${laptop.category}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteProduct('${laptop.id}')" 
+                            class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                        Удалить
+                    </button>
+                </div>
+            `).join('');
+        }
+
+       
+        async function deleteProduct(productId) {
+            if (!confirm('Вы уверены, что хотите удалить этот товар?')) {
+                return;
+            }
+
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { error } = await supabase
+                    .from('laptops')
+                    .delete()
+                    .eq('id', productId);
+
+                if (error) throw error;
+
+               
+                loadLaptops();
+                loadAdminProducts();
+                
+                alert('Товар успешно удален!');
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Ошибка при удалении товара: ' + error.message);
+            }
+        }
+
+       
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ru-RU').format(price);
+        }
+
+        
+        function renderSpecifications(specs) {
+            if (!specs) return '';
+            
+            const specifications = typeof specs === 'string' ? JSON.parse(specs) : specs;
+            
+            return Object.entries(specifications)
+                .filter(([key, value]) => value && value !== '') 
+                .map(([key, value]) => {
+                    const label = getSpecLabel(key);
+                    return `<li class="flex items-center gap-2">${label}: ${value}</li>`;
+                }).join('');
+        }
+
+        
+        function getSpecLabel(key) {
+            const labels = {
+                'processor': 'Процессор',
+                'graphics': 'Видеокарта',
+                'ram': 'Память',
+                'storage': 'Накопитель',
+                'display': 'Экран',
+                'battery': 'Автономность',
+                'weight': 'Вес'
+            };
+            return labels[key] || key;
+        }
+    </script>
+</body>
+</html>

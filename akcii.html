@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Акции и скидки | TechStore - выгодные предложения</title>
+    <meta name="description" content="Специальные акции и скидки в TechStore. Распродажа ноутбуков, смартфонов, техники. Скидки до 30%. Ограниченное время!">
+    
+    <meta property="og:title" content="Акции и скидки | TechStore">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://techstore.com/akcii">
+    <meta property="og:image" content="https://techstore.com/images/og-sales.jpg">
+    <meta property="og:description" content="Скидки до 30% на технику! Ограниченное время акции.">
+    <link rel="icon" href="https://images.icon-icons.com/4317/PNG/96/atom_science_molecule_medical_research_physics_icon_267683.png" type="image/x-icon">
+    <link rel="canonical" href="https://techstore.com/akcii">
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+   
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #9f7aea 100%);
+            min-height: 100vh;
+        }
+        
+        .feature-card {
+            backdrop-filter: blur(10px);
+        }
+        
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+        
+        .sale-button {
+            transition: all 0.3s;
+        }
+        
+        .sale-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .sale-card {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(200, 200, 220, 0.3);
+        }
+        
+        .sale-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(150, 140, 200, 0.2);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #9f7aea;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .active-nav-link {
+            background: rgba(159, 122, 234, 0.1);
+            color: #9f7aea;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px rgba(159, 122, 234, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(159, 122, 234, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(159, 122, 234, 0.3); }
+        }
+        
+        .discount-badge {
+            background: linear-gradient(135deg, #9f7aea, #d2c8e7);
+        }
+        
+        .sale-header {
+            background: linear-gradient(135deg, #9f7aea, #d2c8e7);
+        }
+        
+        .installment-header {
+            background: linear-gradient(135deg, #9f7aea, #d2c8e7);
+        }
+        
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    
+    <header class="bg-white bg-opacity-90 py-4 fixed w-full top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-purple-600">TECHSTORE</div>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Главная</a>
+                <a href="noutbuki.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Ноутбуки</a>
+                <a href="telefony.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Телефоны</a>
+                <a href="akcii.html" class="nav-link text-gray-700 hover:text-purple-600 transition">Акции</a>
+                <button onclick="toggleAdminPanel()" class="nav-link text-gray-700 hover:text-purple-600 transition">Админ-панель</button>
+            </div>
+            
+            
+            <div class="md:hidden">
+                <button id="toggleMenu" class="flex flex-col space-y-1 min-h-11 min-w-11 justify-center items-center" aria-label="Открыть меню">
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-700"></span>
+                </button>
+            </div>
+        </nav>
+        
+       
+        <div id="mobileMenu" class="mobile-menu md:hidden bg-white bg-opacity-95 absolute top-full left-0 w-full hidden shadow-md">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="index.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Главная</a>
+                <a href="noutbuki.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Ноутбуки</a>
+                <a href="telefony.html" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Телефоны</a>
+                <a href="akcii.html" class="text-purple-600 transition py-3 text-center border-b border-gray-200">Акции</a>
+                <button onclick="toggleAdminPanel()" class="text-gray-700 hover:text-purple-600 transition py-3 text-center border-b border-gray-200">Админ-панель</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Админ-панель -->
+    <div id="adminPanel" class="admin-panel fixed top-0 left-0 w-full h-full z-50 hidden overflow-y-auto">
+        <div class="container mx-auto p-6 max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Админ-панель - Акции</h2>
+                <button onclick="toggleAdminPanel()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Закрыть
+                </button>
+            </div>
+
+            <!-- Форма добавления акции -->
+            <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                <h3 class="text-xl font-semibold mb-4">Добавить новую акцию</h3>
+                <form id="addSaleForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Название акции *</label>
+                            <input type="text" id="saleTitle" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="Распродажа игровых ноутбуков">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Тип акции *</label>
+                            <select id="saleType" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="discount">Скидка</option>
+                                <option value="installment">Рассрочка</option>
+                                <option value="gift">Подарок</option>
+                                <option value="special">Специальное предложение</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Продукт *</label>
+                            <input type="text" id="saleProduct" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="ASUS ROG Strix G15">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Категория *</label>
+                            <select id="saleCategory" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="laptops">Ноутбуки</option>
+                                <option value="phones">Телефоны</option>
+                                <option value="gadgets">Гаджеты</option>
+                                <option value="all">Все товары</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Старая цена (руб)</label>
+                            <input type="number" id="saleOldPrice" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="125000">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Новая цена (руб) *</label>
+                            <input type="number" id="saleNewPrice" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="93750">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Описание акции</label>
+                        <textarea id="saleDescription" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                  placeholder="Мощные игровые ноутбуки по специальным ценам..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">URL изображения *</label>
+                        <input type="url" id="saleImage" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               placeholder="https://example.com/image.jpg">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ссылка на товар</label>
+                            <input type="text" id="saleLink" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="catalog/noutbuki/asus-rog-strix-sale.html">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Срок действия (дней)</label>
+                            <input type="number" id="saleDuration" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="7" value="7">
+                        </div>
+                    </div>
+
+                    <!-- Характеристики акции -->
+                    <div class="border-t pt-4">
+                        <h4 class="text-lg font-medium mb-3">Детали акции</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="saleDetailsContainer">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Основные преимущества</label>
+                                <input type="text" id="saleBenefit1" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="Видеокарта NVIDIA RTX 3060 6GB">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Дополнительные преимущества</label>
+                                <input type="text" id="saleBenefit2" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="Процессор Intel Core i7">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Характеристика 3</label>
+                                <input type="text" id="saleBenefit3" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="Оперативная память 16GB DDR4">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Характеристика 4</label>
+                                <input type="text" id="saleBenefit4" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                       placeholder="Накопитель 1TB NVMe SSD">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-all duration-300">
+                        Добавить акцию
+                    </button>
+                </form>
+            </div>
+
+            <!-- Список существующих акций -->
+            <div class="bg-white rounded-lg p-6 shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Активные акции</h3>
+                <div id="adminSalesList" class="space-y-4">
+                    <!-- Акции будут загружены здесь -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <main class="pt-20">
+       
+        <section class="text-center py-8 md:py-12 lg:py-16 px-4 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-50/30 to-transparent"></div>
+            <div class="relative">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 text-gray-800">СПЕЦИАЛЬНЫЕ АКЦИИ</h1>
+                <p class="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 text-gray-600 max-w-2xl mx-auto">
+                    Самые выгодные предложения этого месяца
+                </p>
+                <div class="bg-purple-600 text-white py-3 px-6 rounded-full inline-block animate-pulse">
+                    <span class="font-bold" id="countdown">Загрузка...</span>
+                </div>
+            </div>
+        </section>
+
+       
+        <section class="container mx-auto px-4 py-8 md:py-12">
+            <div id="loading" class="text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <p class="mt-2 text-gray-600">Загрузка акций...</p>
+            </div>
+            <div id="salesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+              
+            </div>
+        </section>
+    </main>
+
+    
+    <script>
+       
+        const SUPABASE_URL = 'https://edugnfxgkwjipagtpcvy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdWduZnhna3dqaXBhZ3RwY3Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0MTg2NzgsImV4cCI6MjA3Nzk5NDY3OH0.XURdMQB_-PmsH_vXZLARHxFVEMAbvB3crVD27Ik2XEQ'; // Замените на ваш ключ
+        
+        let supabase;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase initialized successfully');
+            } else {
+                console.error('Supabase library not loaded');
+                alert('Ошибка: Библиотека Supabase не загрузилась. Проверьте подключение к интернету.');
+                return;
+            }
+
+            
+            const toggleMenu = document.getElementById('toggleMenu');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const hamburgerLines = document.querySelectorAll('.hamburger-line');
+            
+            toggleMenu.addEventListener('click', function() {
+                const isOpen = mobileMenu.classList.contains('hidden');
+                
+                if (isOpen) {
+                    mobileMenu.classList.remove('hidden');
+                    hamburgerLines[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    hamburgerLines[1].style.opacity = '0';
+                    hamburgerLines[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    hamburgerLines[0].style.transform = 'none';
+                    hamburgerLines[1].style.opacity = '1';
+                    hamburgerLines[2].style.transform = 'none';
+                }
+            });
+
+           
+            loadSales();
+            loadAdminSales();
+
+            
+            document.getElementById('addSaleForm').addEventListener('submit', handleAddSale);
+
+            
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+        });
+
+       
+        function toggleAdminPanel() {
+            const adminPanel = document.getElementById('adminPanel');
+            adminPanel.classList.toggle('hidden');
+            
+           
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                const hamburgerLines = document.querySelectorAll('.hamburger-line');
+                hamburgerLines[0].style.transform = 'none';
+                hamburgerLines[1].style.opacity = '1';
+                hamburgerLines[2].style.transform = 'none';
+            }
+        }
+
+        
+        async function loadSales() {
+            const container = document.getElementById('salesContainer');
+            const loading = document.getElementById('loading');
+            
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { data: sales, error } = await supabase
+                    .from('sales')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                loading.style.display = 'none';
+                
+                if (error) {
+                    console.error('Error loading sales:', error);
+                    container.innerHTML = '<p class="text-center col-span-2 py-8 text-red-600">Ошибка загрузки акций: ' + error.message + '</p>';
+                    return;
+                }
+
+               
+                displaySales(sales);
+            } catch (error) {
+                console.error('Error:', error);
+                loading.innerHTML = '<p class="text-red-600">Ошибка загрузки акций: ' + error.message + '</p>';
+            }
+        }
+
+        
+        async function loadAdminSales() {
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { data: sales, error } = await supabase
+                    .from('sales')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                displayAdminSales(sales);
+            } catch (error) {
+                console.error('Error loading admin sales:', error);
+                document.getElementById('adminSalesList').innerHTML = '<p class="text-red-600">Ошибка загрузки: ' + error.message + '</p>';
+            }
+        }
+
+      
+        async function handleAddSale(e) {
+            e.preventDefault();
+            
+            if (!supabase) {
+                alert('Ошибка: Supabase не инициализирован');
+                return;
+            }
+
+            const saleData = {
+                title: document.getElementById('saleTitle').value,
+                type: document.getElementById('saleType').value,
+                product: document.getElementById('saleProduct').value,
+                category: document.getElementById('saleCategory').value,
+                old_price: document.getElementById('saleOldPrice').value ? parseInt(document.getElementById('saleOldPrice').value) : null,
+                new_price: parseInt(document.getElementById('saleNewPrice').value),
+                description: document.getElementById('saleDescription').value,
+                image_url: document.getElementById('saleImage').value,
+                link: document.getElementById('saleLink').value,
+                duration: parseInt(document.getElementById('saleDuration').value),
+                benefits: {
+                    benefit1: document.getElementById('saleBenefit1').value,
+                    benefit2: document.getElementById('saleBenefit2').value,
+                    benefit3: document.getElementById('saleBenefit3').value,
+                    benefit4: document.getElementById('saleBenefit4').value
+                }
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('sales')
+                    .insert([saleData]);
+
+                if (error) throw error;
+
+               
+                document.getElementById('addSaleForm').reset();
+                
+               
+                alert('Акция успешно добавлена!');
+                
+              
+                loadSales();
+                loadAdminSales();
+                
+            } catch (error) {
+                console.error('Error adding sale:', error);
+                alert('Ошибка при добавлении акции: ' + error.message);
+            }
+        }
+
+       
+        function displaySales(sales) {
+            const container = document.getElementById('salesContainer');
+            
+            if (!sales || sales.length === 0) {
+                container.innerHTML = '<p class="text-center col-span-2 py-8 text-gray-600">Активные акции временно отсутствуют</p>';
+                return;
+            }
+
+            container.innerHTML = sales.map(sale => `
+                <div class="sale-card rounded-xl shadow-sm overflow-hidden relative">
+                    <div class="sale-header text-white p-6 md:p-8 text-center">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-2">${sale.title}</h2>
+                        <p class="opacity-90">${sale.description}</p>
+                    </div>
+                    <div class="p-4 md:p-6 lg:p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                            <div class="rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img 
+                                    src="${sale.image_url}" 
+                                    alt="${sale.title}" 
+                                    loading="lazy"
+                                    class="w-full h-48 md:h-56 object-cover"
+                                >
+                            </div>
+                            <div>
+                                <h3 class="text-xl md:text-2xl font-bold text-purple-600 mb-4">${sale.product}</h3>
+                                <ul class="space-y-2 mb-4 text-sm md:text-base text-gray-600">
+                                    ${renderSaleBenefits(sale.benefits)}
+                                </ul>
+                                <div class="bg-gray-50 p-4 rounded-xl border-2 border-dashed border-purple-300 mb-4">
+                                    ${sale.old_price ? `
+                                        <div class="text-2xl md:text-3xl font-bold text-purple-600">
+                                            <span class="text-gray-500 line-through text-lg md:text-xl">${formatPrice(sale.old_price)} руб.</span><br>
+                                            ${formatPrice(sale.new_price)} руб.
+                                        </div>
+                                    ` : `
+                                        <div class="text-2xl md:text-3xl font-bold text-purple-600">
+                                            ${formatPrice(sale.new_price)} руб.
+                                        </div>
+                                    `}
+                                </div>
+                                <a href="${sale.link || '#'}" 
+                                   class="sale-button bg-purple-600 text-white py-3 px-6 rounded-lg text-center block font-semibold min-h-11 hover:bg-purple-700 shadow-md">
+                                    ${getSaleButtonText(sale.type)}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        
+        function displayAdminSales(sales) {
+            const container = document.getElementById('adminSalesList');
+            
+            if (!sales || sales.length === 0) {
+                container.innerHTML = '<p class="text-gray-600">Акций нет</p>';
+                return;
+            }
+
+            container.innerHTML = sales.map(sale => `
+                <div class="border rounded-lg p-4 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <img src="${sale.image_url}" alt="${sale.title}" class="w-16 h-16 object-contain rounded">
+                        <div>
+                            <h4 class="font-semibold">${sale.title}</h4>
+                            <p class="text-purple-600 font-bold">${sale.product}</p>
+                            <p class="text-sm text-gray-500">${sale.type} • ${sale.category}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteSale('${sale.id}')" 
+                            class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                        Удалить
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        
+        async function deleteSale(saleId) {
+            if (!confirm('Вы уверены, что хотите удалить эту акцию?')) {
+                return;
+            }
+
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+
+                const { error } = await supabase
+                    .from('sales')
+                    .delete()
+                    .eq('id', saleId);
+
+                if (error) throw error;
+
+                
+                loadSales();
+                loadAdminSales();
+                
+                alert('Акция успешно удалена!');
+            } catch (error) {
+                console.error('Error deleting sale:', error);
+                alert('Ошибка при удалении акции: ' + error.message);
+            }
+        }
+
+       
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ru-RU').format(price);
+        }
+
+        
+        function renderSaleBenefits(benefits) {
+            if (!benefits) return '';
+            
+            const saleBenefits = typeof benefits === 'string' ? JSON.parse(benefits) : benefits;
+            
+            return Object.entries(saleBenefits)
+                .filter(([key, value]) => value && value !== '') 
+                .map(([key, value]) => `<li class="flex items-center gap-2">${value}</li>`)
+                .join('');
+        }
+
+     
+        function getSaleButtonText(type) {
+            const buttons = {
+                'discount': 'Купить со скидкой',
+                'installment': 'Оформить рассрочку',
+                'gift': 'Получить подарок',
+                'special': 'Воспользоваться предложением'
+            };
+            return buttons[type] || 'Участвовать в акции';
+        }
+
+        
+        function updateCountdown() {
+            const now = new Date();
+            const endDate = new Date(now);
+            endDate.setDate(now.getDate() + 2);
+            endDate.setHours(14, 28, 15, 0);
+            
+            const diff = endDate - now;
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').textContent = 'Акция завершена!';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('countdown').textContent = 
+                `${days} дней ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
